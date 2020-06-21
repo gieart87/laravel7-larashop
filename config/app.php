@@ -181,6 +181,8 @@ return [
 		Laracasts\Flash\FlashServiceProvider::class,
 		Darryldecode\Cart\CartServiceProvider::class,
 		Intervention\Image\ImageServiceProvider::class,
+
+		App\Providers\AdminRepositoryServiceProvider::class,
 	],
 
 	/*
