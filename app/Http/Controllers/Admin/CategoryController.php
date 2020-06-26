@@ -63,7 +63,9 @@ class CategoryController extends Controller
 	 */
 	public function store(CategoryRequest $request)
 	{
-		if ($this->_categoryRepository->create($request)) {
+		$params = $request->validated();
+
+		if ($this->_categoryRepository->create($params)) {
 			Session::flash('success', 'Category has been saved');
 		}
 		return redirect('admin/categories');
@@ -94,7 +96,9 @@ class CategoryController extends Controller
 	 */
 	public function update(CategoryRequest $request, $id)
 	{
-		if ($this->_categoryRepository->update($request, $id)) {
+		$params = $request->validated();
+
+		if ($this->_categoryRepository->update($params, $id)) {
 			Session::flash('success', 'Category has been updated.');
 		}
 

@@ -36,21 +36,21 @@ interface CategoryRepositoryInterface
 	/**
 	 * Create new record
 	 *
-	 * @param CategoryRequest $categoryRequest request params
+	 * @param array $params request params
 	 *
 	 * @return Category
 	 */
-	public function create(CategoryRequest $categoryRequest);
+	public function create($params);
 
 	/**
 	 * Update existing record
 	 *
-	 * @param CategoryRequest $categoryRequest request params
-	 * @param int             $categoryId      category id
+	 * @param array $params     request params
+	 * @param int   $categoryId category id
 	 *
 	 * @return Category
 	 */
-	public function update(CategoryRequest $categoryRequest, int $categoryId);
+	public function update($params, int $categoryId);
 
 	/**
 	 * Delete a record

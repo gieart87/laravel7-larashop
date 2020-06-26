@@ -2,14 +2,33 @@
 
 namespace App\Repositories\Admin;
 
-use App\Http\Requests\CategoryRequest;
+use Illuminate\Support\Str;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use App\Repositories\Admin\Interfaces\CategoryRepositoryInterface;
 
 use App\Models\Category;
 
+use App\Exceptions\CreateCategoryErrorException;
+use App\Exceptions\UpdateCategoryErrorException;
+use App\Exceptions\CategoryNotFoundErrorException;
+
 class CategoryRepository implements CategoryRepositoryInterface
 {
+	private $_model;
+
+	/**
+	 * Create a new controller instance.
+	 *
+	 * @param Category $model category object
+	 *
+	 * @return void
+	 */
+	public function __construct(Category $model)
+	{
+		$this->_model = $model;
+	}
 	/**
 	 * Paginated collection
 	 *
@@ -31,7 +50,11 @@ class CategoryRepository implements CategoryRepositoryInterface
 	 */
 	public function findById($categoryId)
 	{
-		return Category::findOrFail($categoryId);
+		try {
+			return Category::findOrFail($categoryId);
+		} catch (ModelNotFoundException $e) {
+			throw new CategoryNotFoundErrorException('Category not found');
+		}
 	}
 
 	/**
@@ -57,36 +80,48 @@ class CategoryRepository implements CategoryRepositoryInterface
 	/**
 	 * Create new record
 	 *
-	 * @param CategoryRequest $request request params
+	 * @param array $params request params
 	 *
 	 * @return Category
 	 */
-	public function create(CategoryRequest $request)
+	public function create($params)
 	{
-		$params = $request->except('_token');
-		$params['slug'] = \Str::slug($params['name']);
-		$params['parent_id'] = (int)$params['parent_id'];
+		$params['slug'] = isset($params['name']) ? Str::slug($params['name']) : null;
 		
-		return Category::create($params);
+		if (!isset($params['parent_id'])) {
+			$params['parent_id'] = 0;
+		}
+		
+		try {
+			return $this->_model::create($params);
+		} catch (QueryException $e) {
+			throw new CreateCategoryErrorException('Error on creating a category');
+		}
 	}
 
 	/**
 	 * Update existing record
 	 *
-	 * @param CategoryRequest $request request params
-	 * @param int             $id      category id
+	 * @param array $params request params
+	 * @param int   $id     category id
 	 *
 	 * @return Category
 	 */
-	public function update(CategoryRequest $request, $id)
+	public function update($params, $id)
 	{
-		$params = $request->except('_token');
-		$params['slug'] = \Str::slug($params['name']);
-		$params['parent_id'] = (int)$params['parent_id'];
+		$params['slug'] = isset($params['name']) ? Str::slug($params['name']) : null;
+		
+		if (!isset($params['parent_id'])) {
+			$params['parent_id'] = 0;
+		}
 
 		$category = Category::findOrFail($id);
 
-		return $category->update($params);
+		try {
+			return $category->update($params);
+		} catch (QueryException $e) {
+			throw new UpdateCategoryErrorException('Error on updating a category');
+		}
 	}
 
 	/**
