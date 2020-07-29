@@ -24,17 +24,17 @@ class AdminRepositoryServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             CategoryRepositoryInterface::class,
-            CategoryRepository::class,
+            CategoryRepository::class
         );
 
         $this->app->bind(
             ProductRepositoryInterface::class,
-            ProductRepository::class,
+            ProductRepository::class
         );
 
         $this->app->bind(
             AttributeRepositoryInterface::class,
-            AttributeRepository::class,
+            AttributeRepository::class
         );
     }
 
