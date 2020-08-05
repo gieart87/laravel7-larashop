@@ -13,9 +13,7 @@ class AddFullTextSearchIndexToProductsTable extends Migration
      */
     public function up()
     {
-        if (DB::getDriverName() !== 'sqlite') {
-            DB::statement('ALTER TABLE products ADD FULLTEXT search(name,slug,short_description,description)');
-        }
+        DB::statement('ALTER TABLE products ADD FULLTEXT search(name,slug,short_description,description)');
     }
 
     /**

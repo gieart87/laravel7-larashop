@@ -14,9 +14,7 @@ class AlterAttributeRelationInProductAttributeValuesTable extends Migration
     public function up()
     {
         Schema::table('product_attribute_values', function (Blueprint $table) {
-            if (DB::getDriverName() !== 'sqlite') {
-                $table->dropForeign('product_attribute_values_attribute_id_foreign');
-            }
+            $table->dropForeign('product_attribute_values_attribute_id_foreign');
             $table->foreign('attribute_id')->references('id')->on('attributes');
         });
     }
@@ -29,9 +27,7 @@ class AlterAttributeRelationInProductAttributeValuesTable extends Migration
     public function down()
     {
         Schema::table('product_attribute_values', function (Blueprint $table) {
-            if (DB::getDriverName() !== 'sqlite') {
-                $table->dropForeign('product_attribute_values_attribute_id_foreign');
-            }
+            $table->dropForeign('product_attribute_values_attribute_id_foreign');
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
         });
     }
