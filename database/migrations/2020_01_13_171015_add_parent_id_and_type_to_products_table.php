@@ -29,9 +29,7 @@ class AddParentIdAndTypeToProductsTable extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            if (DB::getDriverName() !== 'sqlite') {
-                $table->dropForeign('products_parent_id_foreign');
-            }
+            $table->dropForeign('products_parent_id_foreign');
             $table->dropColumn('parent_id');
             $table->dropColumn('type');
         });

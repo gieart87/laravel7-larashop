@@ -21,33 +21,29 @@ use App\Models\Slide;
  */
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+	/**
+	 * Create a new controller instance.
+	 *
+	 * @return void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+	}
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
-    {
-        if (\DB::getDriverName() !== 'sqlite') {
-            $products = Product::popular()->get();
-            $this->data['products'] = $products;
-        } else {
-            $this->data['products'] = [];
-        }
+	/**
+	 * Show the application dashboard.
+	 *
+	 * @return \Illuminate\Contracts\Support\Renderable
+	 */
+	public function index()
+	{
+		$products = Product::popular()->get();
+		$this->data['products'] = $products;
 
-        $slides = Slide::active()->orderBy('position', 'ASC')->get();
-        $this->data['slides'] = $slides;
+		$slides = Slide::active()->orderBy('position', 'ASC')->get();
+		$this->data['slides'] = $slides;
 
-        return $this->loadTheme('home', $this->data);
-    }
+		return $this->loadTheme('home', $this->data);
+	}
 }

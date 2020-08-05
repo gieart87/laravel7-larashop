@@ -14,9 +14,7 @@ class RemoveColumnProductAttributeValueIdInProductInventoriesTable extends Migra
     public function up()
     {
         Schema::table('product_inventories', function (Blueprint $table) {
-            if (DB::getDriverName() !== 'sqlite') {
-                $table->dropForeign(['product_attribute_value_id']);
-            }
+            $table->dropForeign(['product_attribute_value_id']);
             $table->dropColumn('product_attribute_value_id');
         });
     }
