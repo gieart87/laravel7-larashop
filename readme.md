@@ -18,10 +18,6 @@ LaraShop is a fun poject of building Ecommerce Application using Laravel 6 Frame
 
 LaraShop is built for learning purpose and you can find out the complete development process on [IndoKoding Youtube Channel](https://www.youtube.com/channel/UCOYDLKGC80YpGSVDM5nttOg). Feel free to grab the full of source code but we don't recommend to deploy in production.
 
-## Run on Google cloud run
-
-[![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=https://github.com/gieart87/laravel7-larashop.git)
-
 ## Credits
 
 - [Laravel Framework](https://laravel.com)
