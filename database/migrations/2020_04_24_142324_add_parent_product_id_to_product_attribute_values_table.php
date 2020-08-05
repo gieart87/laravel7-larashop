@@ -28,7 +28,9 @@ class AddParentProductIdToProductAttributeValuesTable extends Migration
     public function down()
     {
         Schema::table('product_attribute_values', function (Blueprint $table) {
-            $table->dropForeign('product_attribute_values_parent_product_id_foreign');
+            if (DB::getDriverName() !== 'sqlite') {
+                $table->dropForeign('product_attribute_values_parent_product_id_foreign');
+            }
 			$table->dropColumn('parent_product_id');
         });
     }
