@@ -8,6 +8,8 @@ interface CatalogueRepositoryInterface
 
     public function findBySlug($slug);
 
+    public function findProductByID($productID);
+
     public function getAttributeOptions($product, $attributeName);
 
     public function getParentCategories();
@@ -17,4 +19,8 @@ interface CatalogueRepositoryInterface
     public function getMinPrice();
 
     public function getMaxPrice();
+
+    public function getProductByAttributes($product, $params);
+
+    public function checkProductInventory($product, $qtyRequested);
 }
