@@ -14,4 +14,20 @@ interface CartRepositoryInterface
     public function updateCart($cartID, $qty);
 
     public function removeItem($cartID);
+
+    public function isEmpty();
+
+    public function removeConditionsByType($type);
+
+    public function updateTax();
+
+    public function getTotalWeight();
+
+    public function getTotal();
+
+    public function addShippingCostToCart($serviceName, $cost);
+
+    public function getShippingCost($destination, $weight);
+
+    public function clear();
 }
