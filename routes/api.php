@@ -16,6 +16,10 @@ use Illuminate\Http\Request;
 Route::post('register', 'API\UserController@register');
 Route::post('login', 'API\UserController@login');
 
+Route::middleware('client')->group(function () {
+    Route::get('products', 'API\ProductController@index');
+});
+
 Route::middleware('auth:api')->group(function () {
     Route::get('profile', 'API\UserController@profile');
     Route::get('logout', 'API\UserController@logout');
