@@ -1,4 +1,4 @@
-## About LaraShop
+## About LaraShop:
 
 LaraShop is a fun poject of building Ecommerce Application using Laravel 6 Framework. It has some basic features , such as:
 
@@ -10,15 +10,15 @@ LaraShop is a fun poject of building Ecommerce Application using Laravel 6 Frame
 - Integrate with Midtrans Payment gateway (for Indonesia only)
 - Back office management: Manage role, user, permission, catalog product, order, and reporting.
 
-## Installation and Usage
+## Installation and Usage:
 
 - [https://www.youtube.com/watch?v=bzKt7A-apq8&feature=youtu.be](https://www.youtube.com/watch?v=bzKt7A-apq8&feature=youtu.be)
 
-## Online Tutorial
+## Online Tutorial:
 
 LaraShop is built for learning purpose and you can find out the complete development process on [IndoKoding Youtube Channel](https://www.youtube.com/channel/UCOYDLKGC80YpGSVDM5nttOg). Feel free to grab the full of source code but we don't recommend to deploy in production.
 
-## Credits
+## Credits:
 
 - [Laravel Framework](https://laravel.com)
 - [MySQL](https://www.mysql.com/)
@@ -27,6 +27,6 @@ LaraShop is built for learning purpose and you can find out the complete develop
 - [Spatie Laravel Permission](https://github.com/spatie/laravel-permission)
 - [Laravel Shopping Cart](https://github.com/darryldecode/laravelshoppingcart)
 
-## License
+## License:
 
 The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
