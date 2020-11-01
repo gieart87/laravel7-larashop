@@ -21,7 +21,10 @@ Route::middleware('client')->group(function () {
     Route::get('products/{sku}', 'API\ProductController@show');
 });
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', 'sessions'])->group(function () {
     Route::get('profile', 'API\UserController@profile');
     Route::get('logout', 'API\UserController@logout');
+
+    Route::get('carts', 'API\CartController@index');
+    Route::post('carts', 'API\CartController@store');
 });
