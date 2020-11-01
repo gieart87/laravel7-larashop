@@ -18,6 +18,7 @@ Route::post('login', 'API\UserController@login');
 
 Route::middleware('client')->group(function () {
     Route::get('products', 'API\ProductController@index');
+    Route::get('products/{sku}', 'API\ProductController@show');
 });
 
 Route::middleware('auth:api')->group(function () {

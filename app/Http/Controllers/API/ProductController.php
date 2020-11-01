@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\API\BaseController;
-use App\Http\Resources\ProductCollection;
+use App\Http\Resources\Product as ProductResource;
 
 use App\Repositories\Front\Interfaces\CatalogueRepositoryInterface;
 
@@ -33,6 +33,13 @@ class ProductController extends BaseController
             'total_pages' => $products->lastPage()
         ];
 
-        return $this->responseOk(new ProductCollection($products), 200, 'Success', $meta);
+        return $this->responseOk(ProductResource::collection($products), 200, 'Success', $meta);
+    }
+
+    public function show($sku)
+    {
+        $product = $this->catalogueRepository->findBySKU($sku);
+
+        return $this->responseOk(new ProductResource($product), 200, 'Success');
     }
 }

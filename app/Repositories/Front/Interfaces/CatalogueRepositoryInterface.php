@@ -8,6 +8,8 @@ interface CatalogueRepositoryInterface
 
     public function findBySlug($slug);
 
+    public function findBySKU($sku);
+
     public function findProductByID($productID);
 
     public function getAttributeOptions($product, $attributeName);
