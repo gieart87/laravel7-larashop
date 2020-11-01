@@ -3,11 +3,11 @@ namespace App\Repositories\Front\Interfaces;
 
 interface CartRepositoryInterface
 {
-    public function getContent();
+    public function getContent($sessionKey = null);
 
     public function getItemQuantity($productID, $qtyRequested);
 
-    public function addItem($item);
+    public function addItem($item, $sessionKey = null);
 
     public function getCartItem($cartID);
 

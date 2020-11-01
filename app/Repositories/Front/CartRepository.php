@@ -25,9 +25,13 @@ class CartRepository implements CartRepositoryInterface
         $this->rajaOngkirOrigin = env('RAJAONGKIR_ORIGIN');
     }
 
-    public function getContent()
+    public function getContent($sessionKey = null)
     {
-        return $items = Cart::getContent();
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->getContent();
+        }
+
+        return Cart::getContent();
     }
 
     public function getItemQuantity($productID, $qtyRequested)
@@ -35,8 +39,12 @@ class CartRepository implements CartRepositoryInterface
         return $this->getCartItemQuantity(md5($productID)) + $qtyRequested;
     }
 
-    public function addItem($item)
+    public function addItem($item, $sessionKey = null)
     {
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->add($item);
+        }
+
         return Cart::add($item);
     }
 
