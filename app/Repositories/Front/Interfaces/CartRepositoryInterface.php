@@ -9,11 +9,11 @@ interface CartRepositoryInterface
 
     public function addItem($item, $sessionKey = null);
 
-    public function getCartItem($cartID);
+    public function getCartItem($cartID, $sessionKey = null);
 
-    public function updateCart($cartID, $qty);
+    public function updateCart($cartID, $qty, $sessionKey = null);
 
-    public function removeItem($cartID);
+    public function removeItem($cartID, $sessionKey = null);
 
     public function isEmpty();
 
@@ -29,5 +29,5 @@ interface CartRepositoryInterface
 
     public function getShippingCost($destination, $weight);
 
-    public function clear();
+    public function clear($sessionKey = null);
 }

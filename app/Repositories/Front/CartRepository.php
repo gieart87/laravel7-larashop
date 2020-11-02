@@ -48,34 +48,45 @@ class CartRepository implements CartRepositoryInterface
         return Cart::add($item);
     }
 
-    public function getCartItem($cartID)
+    public function getCartItem($cartID, $sessionKey = null)
     {
-        $items = Cart::getContent();
+        $items = $this->getContent($sessionKey);
 
-        return $items[$cartID];
+        return !(empty($items[$cartID])) ? $items[$cartID] : null;
     }
 
-    public function updateCart($cartID, $qty)
+    public function updateCart($cartID, $qty, $sessionKey = null)
     {
-        return Cart::update(
-            $cartID,
-            [
-                'quantity' => [
-                    'relative' => false,
-                    'value' => $qty,
-                ],
-            ]
-        );
+        $params = [
+            'quantity' => [
+                'relative' => false,
+                'value' => $qty,
+            ],
+        ];
+
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->update($cartID, $params);
+        }
+
+        return Cart::update($cartID, $params);
     }
 
-    public function removeItem($cartID)
+    public function removeItem($cartID, $sessionKey = null)
     {
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->remove($cartID);
+        }
+
         return Cart::remove($cartID);
     }
     
-    public function clear()
+    public function clear($sessionKey = null)
     {
-        Cart::clear();
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->clear();
+        }
+
+        return Cart::clear();
     }
 
     public function isEmpty()
