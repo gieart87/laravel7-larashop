@@ -28,9 +28,11 @@ class CartRepository implements CartRepositoryInterface
     public function getContent($sessionKey = null)
     {
         if ($sessionKey) {
+            $this->updateTax($sessionKey);
             return Cart::session($sessionKey)->getContent();
         }
 
+        $this->updateTax();
         return Cart::getContent();
     }
 
@@ -89,40 +91,62 @@ class CartRepository implements CartRepositoryInterface
         return Cart::clear();
     }
 
-    public function isEmpty()
+    public function isEmpty($sessionKey = null)
     {
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->isEmpty();
+        }
+    
         return Cart::isEmpty();
     }
 
-    public function removeConditionsByType($type)
+    public function removeConditionsByType($type, $sessionKey = null)
     {
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->removeConditionsByType($type);
+        }
+
         return Cart::removeConditionsByType($type);
     }
 
-    public function updateTax()
+    public function updateTax($sessionKey = null)
     {
-        Cart::removeConditionsByType('tax');
-
         $condition = new \Darryldecode\Cart\CartCondition(
             [
                 'name' => 'TAX 10%',
                 'type' => 'tax',
-                'target' => 'total',
+                'target' => 'subtotal',
                 'value' => '10%',
             ]
         );
 
-        Cart::condition($condition);
+        if ($sessionKey) {
+            Cart::session($sessionKey)->removeConditionsByType('tax');
+            Cart::session($sessionKey)->condition($condition);
+        } else {
+            Cart::removeConditionsByType('tax');
+            Cart::condition($condition);
+        }
     }
 
-    public function getTotalWeight()
+    public function getTotalWeight($sessionKey = null)
     {
-        if (Cart::isEmpty()) {
-            return 0;
+        if ($sessionKey) {
+            if (Cart::session($sessionKey)->isEmpty()) {
+                return 0;
+            }
+        } else {
+            if (Cart::isEmpty()) {
+                return 0;
+            }
         }
 
         $totalWeight = 0;
-        $items = Cart::getContent();
+        if ($sessionKey) {
+            $items = Cart::session($sessionKey)->getContent();
+        } else {
+            $items = Cart::getContent();
+        }
 
         foreach ($items as $item) {
             $totalWeight += ($item->quantity * $item->associatedModel->weight);
@@ -131,9 +155,31 @@ class CartRepository implements CartRepositoryInterface
         return $totalWeight;
     }
 
-    public function getTotal()
+    public function getSubTotal($sessionKey = null)
     {
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->getSubTotal();
+        }
+
+        return Cart::getSubTotal();
+    }
+
+    public function getTotal($sessionKey = null)
+    {
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->getTotal();
+        }
+
         return Cart::getTotal();
+    }
+
+    public function getConditionValue($name, $sessionKey = null)
+    {
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->getCondition($name);
+        }
+
+        return Cart::getCondition($name);
     }
 
     /**

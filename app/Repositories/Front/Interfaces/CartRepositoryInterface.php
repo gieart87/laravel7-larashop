@@ -15,19 +15,21 @@ interface CartRepositoryInterface
 
     public function removeItem($cartID, $sessionKey = null);
 
-    public function isEmpty();
+    public function isEmpty($sessionKey = null);
 
-    public function removeConditionsByType($type);
+    public function removeConditionsByType($type, $sessionKey = null);
 
-    public function updateTax();
+    public function updateTax($sessionKey = null);
 
-    public function getTotalWeight();
+    public function getTotalWeight($sessionKey = null);
 
-    public function getTotal();
+    public function getTotal($sessionKey = null);
 
     public function addShippingCostToCart($serviceName, $cost);
 
     public function getShippingCost($destination, $weight);
+
+    public function getConditionValue($name, $sessionKey);
 
     public function clear($sessionKey = null);
 }
