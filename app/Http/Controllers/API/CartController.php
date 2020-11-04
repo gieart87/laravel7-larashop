@@ -29,7 +29,14 @@ class CartController extends BaseController
     {
         $items = $this->cartRepository->getContent($this->getSessionKey($request));
 
-        return $this->responseOk(ItemResource::collection($items), 200, 'Success');
+        $cart = [
+            'items' => ItemResource::collection($items),
+            'shipping_cost' => $this->cartRepository->getConditionValue('shipping_cost', $this->getSessionKey($request)),
+            'tax_amount' => $this->cartRepository->getConditionValue('TAX 10%', $this->getSessionKey($request)),
+            'total' => $this->cartRepository->getTotal($this->getSessionKey($request)),
+        ];
+
+        return $this->responseOk($cart, 200, 'Success');
     }
 
     public function store(Request $request)
@@ -135,6 +142,77 @@ class CartController extends BaseController
         }
 
         return $this->responseError('Clear cart item failed', 400);
+    }
+
+    public function shippingOptions(Request $request)
+    {
+        $params = $request->all();
+
+        $validator = Validator::make($params, [
+            'city_id' => ['required', 'numeric'],
+        ]);
+
+        if ($validator->fails()) {
+            return $this->responseError('Get shipping options failed', 422, $validator->errors());
+        }
+
+        try {
+            $destination = $params['city_id'];
+            $weight = $this->cartRepository->getTotalWeight($this->getSessionKey($request));
+
+            return $this->responseOk($this->cartRepository->getShippingCost($destination, $weight), 200, 'success');
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return $this->responseError($e->getMessage(), 400);
+        }
+
+        return $this->responseError('Get shipping options failed', 400);
+    }
+
+    public function setShipping(Request $request)
+    {
+        $params = $request->all();
+        $validator = Validator::make($params, [
+            'city_id' => ['required', 'numeric'],
+            'shipping_service' => ['required', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return $this->responseError('Set shipping failed', 422, $validator->errors());
+        }
+
+
+        $this->cartRepository->removeConditionsByType('shipping', $this->getSessionKey($request));
+
+        $shippingService = $request->get('shipping_service');
+        $destination = $request->get('city_id');
+
+        $shippingOptions = $this->cartRepository->getShippingCost($destination, $this->cartRepository->getTotalWeight($this->getSessionKey($request)));
+
+        $selectedShipping = null;
+        if ($shippingOptions['results']) {
+            foreach ($shippingOptions['results'] as $shippingOption) {
+                if (str_replace(' ', '', $shippingOption['service']) == $shippingService) {
+                    $selectedShipping = $shippingOption;
+                    break;
+                }
+            }
+        }
+
+        $status = null;
+        $message = null;
+        $data = [];
+        if ($selectedShipping) {
+            $status = 200;
+            $message = 'Success set shipping cost';
+
+            $this->cartRepository->addShippingCostToCart('shipping_cost', $selectedShipping['cost']);
+
+            $data['total'] = number_format($this->cartRepository->getTotal());
+
+            return $this->responseOk($data, 200, 'success');
+        }
+
+        return $this->responseError('Failed to set shipping cost', 400);
     }
 
     private function getSessionKey($request)
