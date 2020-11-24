@@ -85,9 +85,11 @@ class CartRepository implements CartRepositoryInterface
     public function clear($sessionKey = null)
     {
         if ($sessionKey) {
+            Cart::session($sessionKey)->clearCartConditions();
             return Cart::session($sessionKey)->clear();
         }
 
+        Cart::clearCartConditions();
         return Cart::clear();
     }
 
@@ -155,6 +157,15 @@ class CartRepository implements CartRepositoryInterface
         return $totalWeight;
     }
 
+    public function getTotalQuantity($sessionKey = null)
+    {
+        if ($sessionKey) {
+            return Cart::session($sessionKey)->getTotalQuantity();
+        }
+
+        return Cart::getTotalQuantity();
+    }
+
     public function getSubTotal($sessionKey = null)
     {
         if ($sessionKey) {
@@ -171,6 +182,18 @@ class CartRepository implements CartRepositoryInterface
         }
 
         return Cart::getTotal();
+    }
+
+    public function getBaseTotalPrice($sessionKey = null)
+    {
+        $items = $this->getContent($sessionKey);
+
+        $baseTotalPrice = 0;
+        foreach ($items as $item) {
+            $baseTotalPrice += $item->getPriceSum();
+        }
+
+        return $baseTotalPrice;
     }
 
     public function getConditionValue($name, $sessionKey = null)

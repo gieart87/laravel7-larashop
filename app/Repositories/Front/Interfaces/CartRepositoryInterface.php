@@ -23,7 +23,11 @@ interface CartRepositoryInterface
 
     public function getTotalWeight($sessionKey = null);
 
+    public function getTotalQuantity($sessionKey = null);
+
     public function getTotal($sessionKey = null);
+
+    public function getBaseTotalPrice($sessionKey = null);
 
     public function addShippingCostToCart($serviceName, $cost);
 

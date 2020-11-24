@@ -31,14 +31,14 @@ class OrderRepository implements OrderRepositoryInterface
         return Order::forUser($user)->findOrFail($orderID);
     }
 
-    public function saveOrder($params)
+    public function saveOrder($params, $sessionKey = null)
     {
         return  \DB::transaction(
-            function () use ($params) {
-                $order = $this->saveOrderData($params);
-                $this->saveOrderItems($order);
+            function () use ($params, $sessionKey) {
+                $order = $this->saveOrderData($params, $sessionKey);
+                $this->saveOrderItems($order, $sessionKey);
                 $this->generatePaymentToken($order);
-                $this->saveShipment($order, $params);
+                $this->saveShipment($order, $params, $sessionKey);
     
                 return $order;
             }
@@ -54,15 +54,17 @@ class OrderRepository implements OrderRepositoryInterface
      *
      * @return Order
      */
-    private function saveOrderData($params)
+    private function saveOrderData($params, $sessionKey)
     {
         $destination = isset($params['ship_to']) ? $params['shipping_city_id'] : $params['city_id'];
-        $selectedShipping = $this->getSelectedShipping($destination, $this->getTotalWeight(), $params['shipping_service']);
+        $selectedShipping = $this->getSelectedShipping($destination, $this->getTotalWeight($sessionKey), $params['shipping_service']);
         
+        $baseTotalPrice = $this->cartRepository->getBaseTotalPrice($sessionKey);
 
-        $baseTotalPrice = \Cart::getSubTotal();
-        $taxAmount = \Cart::getCondition('TAX 10%')->getCalculatedValue(\Cart::getSubTotal());
-        $taxPercent = (float)\Cart::getCondition('TAX 10%')->getValue();
+        $this->cartRepository->getSubTotal($sessionKey);
+        $taxAmount = $this->cartRepository->getConditionValue('TAX 10%', $sessionKey)->parsedRawValue;
+        $taxPercent = (float)$this->cartRepository->getConditionValue('TAX 10%', $sessionKey)->getValue();
+
         $shippingCost = $selectedShipping['cost'];
         $discountAmount = 0;
         $discountPercent = 0;
@@ -134,9 +136,9 @@ class OrderRepository implements OrderRepositoryInterface
      *
      * @return int
      */
-    private function getTotalWeight()
+    private function getTotalWeight($sessionKey = null)
     {
-        return $this->cartRepository->getTotalWeight();
+        return $this->cartRepository->getTotalWeight($sessionKey);
     }
     
     /**
@@ -146,9 +148,9 @@ class OrderRepository implements OrderRepositoryInterface
      *
      * @return void
      */
-    private function saveOrderItems($order)
+    private function saveOrderItems($order, $sessionKey = null)
     {
-        $cartItems = \Cart::getContent();
+        $cartItems = $this->cartRepository->getContent($sessionKey);
 
         if ($order && $cartItems) {
             foreach ($cartItems as $item) {
@@ -253,7 +255,7 @@ class OrderRepository implements OrderRepositoryInterface
      *
      * @return void
      */
-    private function saveShipment($order, $params)
+    private function saveShipment($order, $params, $sessionKey = null)
     {
         $shippingFirstName = isset($params['ship_to']) ? $params['shipping_first_name'] : $params['first_name'];
         $shippingLastName = isset($params['ship_to']) ? $params['shipping_last_name'] : $params['last_name'];
@@ -270,8 +272,8 @@ class OrderRepository implements OrderRepositoryInterface
             'user_id' => \Auth::user()->id,
             'order_id' => $order->id,
             'status' => Shipment::PENDING,
-            'total_qty' => \Cart::getTotalQuantity(),
-            'total_weight' => $this->getTotalWeight(),
+            'total_qty' => $this->cartRepository->getTotalQuantity($sessionKey),
+            'total_weight' => $this->getTotalWeight($sessionKey),
             'first_name' => $shippingFirstName,
             'last_name' => $shippingLastName,
             'address1' => $shippingAddress1,
