@@ -8,5 +8,5 @@ interface OrderRepositoryInterface
 
     public function getOrder($user, $orderID);
 
-    public function saveOrder($params);
+    public function saveOrder($params, $sessionKey = null);
 }
